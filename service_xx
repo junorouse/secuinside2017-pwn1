@@ -1,0 +1,11 @@
+service vm
+{
+disable = no
+flags = REUSE
+socket_type = stream
+wait = no
+user = root
+server = /home/ubuntu/example/b
+env = "TESSDATA_PREFIX=/home/ubuntu/example/"
+}
+
