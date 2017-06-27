@@ -36,31 +36,31 @@
 
 #define INS_GET 1
 #define INS_PRT 2
-#define INS_PRT_CHAR 50
+#define INS_PRT_CHAR 3
 
-#define INS_CMP 3
-#define INS_JMP 30
-#define INS_SAME_JMP 31
-#define INS_LESS_JMP 32
-#define INS_BIGGER_JMP 5
+#define INS_CMP 4
+#define INS_JMP 5
+#define INS_SAME_JMP 6
+#define INS_LESS_JMP 7
+#define INS_BIGGER_JMP 8
 
-#define INS_MOV 6
-#define INS_MOV_PTR 7 // under construction
-#define INS_PTR_MOV 70 // under construction, heap leak
+#define INS_MOV 9
+#define INS_MOV_PTR 10
+#define INS_PTR_MOV 11
 
-#define INS_INC 8
-#define INS_DEC 9
+#define INS_INC 12
+#define INS_DEC 13
 
-#define INS_MUL 10
-#define INS_DIV 11
-#define INS_SUB 12
-#define INS_ADD 13
-#define INS_MOD 14
-#define INS_INIT 15
+#define INS_MUL 14
+#define INS_DIV 15
+#define INS_SUB 16
+#define INS_ADD 17
+#define INS_MOD 18
+#define INS_INIT 19
 
-#define INS_NOP 16
+#define INS_NOP 20
 
-#define INS_SEPERATOR 20
+#define INS_SEPERATOR 31
 
 
 using namespace std; // check
@@ -68,6 +68,10 @@ using namespace std; // check
 // global variables
 
 char fuck[256] = "mynameisjunoim";
+
+// function ptrs (fucking mapping functions !)
+
+char (*mapper[1024]) (int idx, int code); // get PIE base and calculate and bomb!
 
 std::string ANSWERSTDOUT;
 std::string MYSTDOUT;
@@ -79,10 +83,6 @@ unsigned int SAME_FLAG, LESS_FLAG, BIGGER_FLAG;
 
 unsigned int CODE_RIP = 0;
 unsigned int MYSTDIN_IDX = 0;
-
-// function ptrs (fucking mapping functions !)
-
-char (*mapper[1024]) (int idx, int code);
 
 // functions
 
@@ -1129,313 +1129,75 @@ char mapping(int idx, std::string &str) {
 
     code = 99;
 
-    if (!str.compare(string("두")))
-        code = INS_INIT;
+    if (!str.compare(string("가")) || !str.compare(string("갸"))) code = 0;
 
-    if (!str.compare(string("유")))
-        code = 1;
+    if (!str.compare(string("나")) || !str.compare(string("냐"))) code = 1;
 
-    if (!str.compare(string("노")))
-        code = INS_SEPERATOR;
+    if (!str.compare(string("다")) || !str.compare(string("댜"))) code = 2;
 
-    if (!str.compare(string("우")))
-        code = 3;
+    if (!str.compare(string("라")) || !str.compare(string("랴"))) code = 3;
 
-    if (!str.compare(string("강")))
-        code = 4;
+    if (!str.compare(string("마")) || !str.compare(string("먀"))) code = 4;
 
-    if (!str.compare(string("냠")) || !str.compare(string("남")))
-        code = 5;
+    if (!str.compare(string("바")) || !str.compare(string("뱌"))) code = 5;
 
-    if (!str.compare(string("깁")) || !str.compare(string("김")))
-        code = INS_MUL;
+    if (!str.compare(string("사")) || !str.compare(string("샤"))) code = 6;
 
-    if (!str.compare(string("구")))
-        code = INS_GET;
+    if (!str.compare(string("아")) || !str.compare(string("야"))) code = 7;
 
-    if (!str.compare(string("고")))
-        code = INS_MOV;
+    if (!str.compare(string("자")) || !str.compare(string("쟈"))) code = 8;
 
-    if (!str.compare(string("다")))
-        code = INS_CMP;
+    if (!str.compare(string("차")) || !str.compare(string("챠"))) code = 9;
 
-    if (!str.compare(string("도")))
-        code = INS_LESS_JMP;
+    if (!str.compare(string("카")) || !str.compare(string("캬"))) code = 10;
 
-    if (!str.compare(string("수")))
-        code = INS_ADD;
+    if (!str.compare(string("타")) || !str.compare(string("탸"))) code = 11;
 
-    if (!str.compare(string("주")))
-        code = INS_PRT;
+    if (!str.compare(string("파")) || !str.compare(string("퍄"))) code = 12;
 
-    if (!str.compare(string("누")))
-        code  = -32;
+    if (!str.compare(string("하")) || !str.compare(string("햐"))) code = 13;
 
-    if (!str.compare(string("무")))
-        code = 7;
+    if (!str.compare(string("거")) || !str.compare(string("겨"))) code = 14;
 
-    if (!str.compare(string("자")))
-        code = INS_INC;
+    if (!str.compare(string("너")) || !str.compare(string("녀"))) code = 15;
 
-    if (!str.compare(string("가")) || !str.compare(string("갸"))) code = -128;
-if (!str.compare(string("나")) || !str.compare(string("냐"))) code = -127;
-if (!str.compare(string("다")) || !str.compare(string("댜"))) code = -126;
-if (!str.compare(string("라")) || !str.compare(string("랴"))) code = -125;
-if (!str.compare(string("마")) || !str.compare(string("먀"))) code = -124;
-if (!str.compare(string("바")) || !str.compare(string("뱌"))) code = -123;
-if (!str.compare(string("사")) || !str.compare(string("샤"))) code = -122;
-if (!str.compare(string("아")) || !str.compare(string("야"))) code = -121;
-if (!str.compare(string("자")) || !str.compare(string("쟈"))) code = -120;
-if (!str.compare(string("차")) || !str.compare(string("챠"))) code = -119;
-if (!str.compare(string("카")) || !str.compare(string("캬"))) code = -118;
-if (!str.compare(string("타")) || !str.compare(string("탸"))) code = -117;
-if (!str.compare(string("파")) || !str.compare(string("퍄"))) code = -116;
-if (!str.compare(string("하")) || !str.compare(string("햐"))) code = -115;
-if (!str.compare(string("거")) || !str.compare(string("겨"))) code = -114;
-if (!str.compare(string("너")) || !str.compare(string("녀"))) code = -113;
-if (!str.compare(string("더")) || !str.compare(string("뎌"))) code = -112;
-if (!str.compare(string("러")) || !str.compare(string("려"))) code = -111;
-if (!str.compare(string("머")) || !str.compare(string("며"))) code = -110;
-if (!str.compare(string("버")) || !str.compare(string("벼"))) code = -109;
-if (!str.compare(string("서")) || !str.compare(string("셔"))) code = -108;
-if (!str.compare(string("어")) || !str.compare(string("여"))) code = -107;
-if (!str.compare(string("저")) || !str.compare(string("져"))) code = -106;
-if (!str.compare(string("처")) || !str.compare(string("쳐"))) code = -105;
-if (!str.compare(string("커")) || !str.compare(string("켜"))) code = -104;
-if (!str.compare(string("터")) || !str.compare(string("텨"))) code = -103;
-if (!str.compare(string("퍼")) || !str.compare(string("펴"))) code = -102;
-if (!str.compare(string("허")) || !str.compare(string("혀"))) code = -101;
-if (!str.compare(string("고")) || !str.compare(string("교"))) code = -100;
-if (!str.compare(string("노")) || !str.compare(string("뇨"))) code = -99;
-if (!str.compare(string("도")) || !str.compare(string("됴"))) code = -98;
-if (!str.compare(string("로")) || !str.compare(string("료"))) code = -97;
-if (!str.compare(string("모")) || !str.compare(string("묘"))) code = -96;
-if (!str.compare(string("보")) || !str.compare(string("뵤"))) code = -95;
-if (!str.compare(string("소")) || !str.compare(string("쇼"))) code = -94;
-if (!str.compare(string("오")) || !str.compare(string("요"))) code = -93;
-if (!str.compare(string("조")) || !str.compare(string("죠"))) code = -92;
-if (!str.compare(string("초")) || !str.compare(string("쵸"))) code = -91;
-if (!str.compare(string("코")) || !str.compare(string("쿄"))) code = -90;
-if (!str.compare(string("토")) || !str.compare(string("됴"))) code = -89;
-if (!str.compare(string("포")) || !str.compare(string("표"))) code = -88;
-if (!str.compare(string("호")) || !str.compare(string("효"))) code = -87;
-if (!str.compare(string("구")) || !str.compare(string("규"))) code = -86;
-if (!str.compare(string("누")) || !str.compare(string("뉴"))) code = -85;
-if (!str.compare(string("두")) || !str.compare(string("듀"))) code = -84;
-if (!str.compare(string("루")) || !str.compare(string("류"))) code = -83;
-if (!str.compare(string("무")) || !str.compare(string("뮤"))) code = -82;
-if (!str.compare(string("부")) || !str.compare(string("뷰"))) code = -81;
-if (!str.compare(string("수")) || !str.compare(string("슈"))) code = -80;
-if (!str.compare(string("우")) || !str.compare(string("유"))) code = -79;
-if (!str.compare(string("주")) || !str.compare(string("쥬"))) code = -78;
-if (!str.compare(string("추")) || !str.compare(string("츄"))) code = -77;
-if (!str.compare(string("쿠")) || !str.compare(string("큐"))) code = -76;
-if (!str.compare(string("투")) || !str.compare(string("튜"))) code = -75;
-if (!str.compare(string("푸")) || !str.compare(string("퓨"))) code = -74;
-if (!str.compare(string("후")) || !str.compare(string("휴"))) code = -73;
-if (!str.compare(string("강")) || !str.compare(string("컁"))) code = -72;
-if (!str.compare(string("낭")) || !str.compare(string("냥"))) code = -71;
-if (!str.compare(string("당")) || !str.compare(string("댱"))) code = -70;
-if (!str.compare(string("랑")) || !str.compare(string("량"))) code = -69;
-if (!str.compare(string("망")) || !str.compare(string("먕"))) code = -68;
-if (!str.compare(string("방")) || !str.compare(string("뱡"))) code = -67;
-if (!str.compare(string("상")) || !str.compare(string("샹"))) code = -66;
-if (!str.compare(string("앙")) || !str.compare(string("양"))) code = -65;
-if (!str.compare(string("장")) || !str.compare(string("쟝"))) code = -64;
-if (!str.compare(string("창")) || !str.compare(string("챵"))) code = -63;
-if (!str.compare(string("캉")) || !str.compare(string("컁"))) code = -62;
-if (!str.compare(string("탕")) || !str.compare(string("턍"))) code = -61;
-if (!str.compare(string("팡")) || !str.compare(string("퍙"))) code = -60;
-if (!str.compare(string("항")) || !str.compare(string("향"))) code = -59;
-if (!str.compare(string("겅")) || !str.compare(string("경"))) code = -58;
-if (!str.compare(string("넝")) || !str.compare(string("녕"))) code = -57;
-if (!str.compare(string("덩")) || !str.compare(string("뎡"))) code = -56;
-if (!str.compare(string("렁")) || !str.compare(string("령"))) code = -55;
-if (!str.compare(string("멍")) || !str.compare(string("명"))) code = -54;
-if (!str.compare(string("벙")) || !str.compare(string("병"))) code = -53;
-if (!str.compare(string("성")) || !str.compare(string("셩"))) code = -52;
-if (!str.compare(string("엉")) || !str.compare(string("영"))) code = -51;
-if (!str.compare(string("정")) || !str.compare(string("졍"))) code = -50;
-if (!str.compare(string("청")) || !str.compare(string("쳥"))) code = -49;
-if (!str.compare(string("컹")) || !str.compare(string("켱"))) code = -48;
-if (!str.compare(string("텅")) || !str.compare(string("텽"))) code = -47;
-if (!str.compare(string("펑")) || !str.compare(string("평"))) code = -46;
-if (!str.compare(string("헝")) || !str.compare(string("형"))) code = -45;
-if (!str.compare(string("공")) || !str.compare(string("굥"))) code = -44;
-if (!str.compare(string("농")) || !str.compare(string("뇽"))) code = -43;
-if (!str.compare(string("동")) || !str.compare(string("둉"))) code = -42;
-if (!str.compare(string("롱")) || !str.compare(string("룡"))) code = -41;
-if (!str.compare(string("몽")) || !str.compare(string("묭"))) code = -40;
-if (!str.compare(string("봉")) || !str.compare(string("뵹"))) code = -39;
-if (!str.compare(string("송")) || !str.compare(string("숑"))) code = -38;
-if (!str.compare(string("옹")) || !str.compare(string("용"))) code = -37;
-if (!str.compare(string("종")) || !str.compare(string("죵"))) code = -36;
-if (!str.compare(string("총")) || !str.compare(string("춍"))) code = -35;
-if (!str.compare(string("콩")) || !str.compare(string("쿙"))) code = -34;
-if (!str.compare(string("통")) || !str.compare(string("툥"))) code = -33;
-if (!str.compare(string("퐁")) || !str.compare(string("푱"))) code = -32;
-if (!str.compare(string("홍")) || !str.compare(string("횽"))) code = -31;
-if (!str.compare(string("궁")) || !str.compare(string("귱"))) code = -30;
-if (!str.compare(string("눙")) || !str.compare(string("늉"))) code = -29;
-if (!str.compare(string("둥")) || !str.compare(string("듕"))) code = -28;
-if (!str.compare(string("룽")) || !str.compare(string("륭"))) code = -27;
-if (!str.compare(string("뭉")) || !str.compare(string("뮹"))) code = -26;
-if (!str.compare(string("붕")) || !str.compare(string("븅"))) code = -25;
-if (!str.compare(string("숭")) || !str.compare(string("슝"))) code = -24;
-if (!str.compare(string("웅")) || !str.compare(string("융"))) code = -23;
-if (!str.compare(string("중")) || !str.compare(string("즁"))) code = -22;
-if (!str.compare(string("충")) || !str.compare(string("츙"))) code = -21;
-if (!str.compare(string("쿵")) || !str.compare(string("큥"))) code = -20;
-if (!str.compare(string("퉁")) || !str.compare(string("튱"))) code = -19;
-if (!str.compare(string("풍")) || !str.compare(string("퓽"))) code = -18;
-if (!str.compare(string("훙")) || !str.compare(string("흉"))) code = -17;
-if (!str.compare(string("간")) || !str.compare(string("갼"))) code = -16;
-if (!str.compare(string("난")) || !str.compare(string("냔"))) code = -15;
-if (!str.compare(string("단")) || !str.compare(string("댠"))) code = -14;
-if (!str.compare(string("란")) || !str.compare(string("랸"))) code = -13;
-if (!str.compare(string("만")) || !str.compare(string("먄"))) code = -12;
-if (!str.compare(string("반")) || !str.compare(string("뱐"))) code = -11;
-if (!str.compare(string("산")) || !str.compare(string("샨"))) code = -10;
-if (!str.compare(string("안")) || !str.compare(string("얀"))) code = -9;
-if (!str.compare(string("잔")) || !str.compare(string("쟌"))) code = -8;
-if (!str.compare(string("찬")) || !str.compare(string("챤"))) code = -7;
-if (!str.compare(string("칸")) || !str.compare(string("캰"))) code = -6;
-if (!str.compare(string("탄")) || !str.compare(string("탼"))) code = -5;
-if (!str.compare(string("판")) || !str.compare(string("퍈"))) code = -4;
-if (!str.compare(string("한")) || !str.compare(string("햔"))) code = -3;
-if (!str.compare(string("건")) || !str.compare(string("견"))) code = -2;
-if (!str.compare(string("넌")) || !str.compare(string("년"))) code = -1;
-if (!str.compare(string("던")) || !str.compare(string("뎐"))) code = 0;
-if (!str.compare(string("런")) || !str.compare(string("련"))) code = 1;
-if (!str.compare(string("먼")) || !str.compare(string("면"))) code = 2;
-if (!str.compare(string("번")) || !str.compare(string("변"))) code = 3;
-if (!str.compare(string("선")) || !str.compare(string("션"))) code = 4;
-if (!str.compare(string("언")) || !str.compare(string("연"))) code = 5;
-if (!str.compare(string("전")) || !str.compare(string("젼"))) code = 6;
-if (!str.compare(string("천")) || !str.compare(string("쳔"))) code = 7;
-if (!str.compare(string("컨")) || !str.compare(string("켠"))) code = 8;
-if (!str.compare(string("턴")) || !str.compare(string("텬"))) code = 9;
-if (!str.compare(string("펀")) || !str.compare(string("편"))) code = 10;
-if (!str.compare(string("헌")) || !str.compare(string("현"))) code = 11;
-if (!str.compare(string("곤")) || !str.compare(string("굔"))) code = 12;
-if (!str.compare(string("논")) || !str.compare(string("뇬"))) code = 13;
-if (!str.compare(string("돈")) || !str.compare(string("됸"))) code = 14;
-if (!str.compare(string("론")) || !str.compare(string("룐"))) code = 15;
-if (!str.compare(string("몬")) || !str.compare(string("묜"))) code = 16;
-if (!str.compare(string("본")) || !str.compare(string("뵨"))) code = 17;
-if (!str.compare(string("손")) || !str.compare(string("숀"))) code = 18;
-if (!str.compare(string("온")) || !str.compare(string("욘"))) code = 19;
-if (!str.compare(string("존")) || !str.compare(string("죤"))) code = 20;
-if (!str.compare(string("촌")) || !str.compare(string("쵼"))) code = 21;
-if (!str.compare(string("콘")) || !str.compare(string("쿈"))) code = 22;
-if (!str.compare(string("톤")) || !str.compare(string("툔"))) code = 23;
-if (!str.compare(string("폰")) || !str.compare(string("푠"))) code = 24;
-if (!str.compare(string("혼")) || !str.compare(string("횬"))) code = 25;
-if (!str.compare(string("군")) || !str.compare(string("균"))) code = 26;
-if (!str.compare(string("눈")) || !str.compare(string("뉸"))) code = 27;
-if (!str.compare(string("둔")) || !str.compare(string("듄"))) code = 28;
-if (!str.compare(string("룬")) || !str.compare(string("륜"))) code = 29;
-if (!str.compare(string("문")) || !str.compare(string("뮨"))) code = 30;
-if (!str.compare(string("분")) || !str.compare(string("뷴"))) code = 31;
-if (!str.compare(string("순")) || !str.compare(string("슌"))) code = 32;
-if (!str.compare(string("운")) || !str.compare(string("윤"))) code = 33;
-if (!str.compare(string("준")) || !str.compare(string("쥰"))) code = 34;
-if (!str.compare(string("춘")) || !str.compare(string("츈"))) code = 35;
-if (!str.compare(string("쿤")) || !str.compare(string("큔"))) code = 36;
-if (!str.compare(string("툰")) || !str.compare(string("튠"))) code = 37;
-if (!str.compare(string("푼")) || !str.compare(string("퓬"))) code = 38;
-if (!str.compare(string("훈")) || !str.compare(string("휸"))) code = 39;
-if (!str.compare(string("각")) || !str.compare(string("갹"))) code = 40;
-if (!str.compare(string("낙")) || !str.compare(string("냑"))) code = 41;
-if (!str.compare(string("닥")) || !str.compare(string("댝"))) code = 42;
-if (!str.compare(string("락")) || !str.compare(string("략"))) code = 43;
-if (!str.compare(string("막")) || !str.compare(string("먁"))) code = 44;
-if (!str.compare(string("박")) || !str.compare(string("뱍"))) code = 45;
-if (!str.compare(string("삭")) || !str.compare(string("샥"))) code = 46;
-if (!str.compare(string("악")) || !str.compare(string("약"))) code = 47;
-if (!str.compare(string("작")) || !str.compare(string("쟉"))) code = 48;
-if (!str.compare(string("착")) || !str.compare(string("챡"))) code = 49;
-if (!str.compare(string("칵")) || !str.compare(string("캭"))) code = 50;
-if (!str.compare(string("탁")) || !str.compare(string("탹"))) code = 51;
-if (!str.compare(string("팍")) || !str.compare(string("퍅"))) code = 52;
-if (!str.compare(string("학")) || !str.compare(string("햑"))) code = 53;
-if (!str.compare(string("걱")) || !str.compare(string("격"))) code = 54;
-if (!str.compare(string("넉")) || !str.compare(string("녁"))) code = 55;
-if (!str.compare(string("덕")) || !str.compare(string("뎍"))) code = 56;
-if (!str.compare(string("럭")) || !str.compare(string("력"))) code = 57;
-if (!str.compare(string("먹")) || !str.compare(string("멱"))) code = 58;
-if (!str.compare(string("벅")) || !str.compare(string("벽"))) code = 59;
-if (!str.compare(string("석")) || !str.compare(string("셕"))) code = 60;
-if (!str.compare(string("억")) || !str.compare(string("역"))) code = 61;
-if (!str.compare(string("적")) || !str.compare(string("젹"))) code = 62;
-if (!str.compare(string("척")) || !str.compare(string("쳑"))) code = 63;
-if (!str.compare(string("컥")) || !str.compare(string("켝"))) code = 64;
-if (!str.compare(string("턱")) || !str.compare(string("텩"))) code = 65;
-if (!str.compare(string("퍽")) || !str.compare(string("펵"))) code = 66;
-if (!str.compare(string("헉")) || !str.compare(string("혁"))) code = 67;
-if (!str.compare(string("곡")) || !str.compare(string("굑"))) code = 68;
-if (!str.compare(string("녹")) || !str.compare(string("뇩"))) code = 69;
-if (!str.compare(string("독")) || !str.compare(string("됵"))) code = 70;
-if (!str.compare(string("록")) || !str.compare(string("룍"))) code = 71;
-if (!str.compare(string("목")) || !str.compare(string("묙"))) code = 72;
-if (!str.compare(string("복")) || !str.compare(string("뵥"))) code = 73;
-if (!str.compare(string("속")) || !str.compare(string("쇽"))) code = 74;
-if (!str.compare(string("옥")) || !str.compare(string("욕"))) code = 75;
-if (!str.compare(string("족")) || !str.compare(string("죡"))) code = 76;
-if (!str.compare(string("촉")) || !str.compare(string("쵹"))) code = 77;
-if (!str.compare(string("콕")) || !str.compare(string("쿅"))) code = 78;
-if (!str.compare(string("톡")) || !str.compare(string("툑"))) code = 79;
-if (!str.compare(string("폭")) || !str.compare(string("푝"))) code = 80;
-if (!str.compare(string("혹")) || !str.compare(string("횩"))) code = 81;
-if (!str.compare(string("국")) || !str.compare(string("귝"))) code = 82;
-if (!str.compare(string("눅")) || !str.compare(string("뉵"))) code = 83;
-if (!str.compare(string("둑")) || !str.compare(string("듁"))) code = 84;
-if (!str.compare(string("룩")) || !str.compare(string("륙"))) code = 85;
-if (!str.compare(string("묵")) || !str.compare(string("뮥"))) code = 86;
-if (!str.compare(string("북")) || !str.compare(string("뷱"))) code = 87;
-if (!str.compare(string("숙")) || !str.compare(string("슉"))) code = 88;
-if (!str.compare(string("욱")) || !str.compare(string("육"))) code = 89;
-if (!str.compare(string("죽")) || !str.compare(string("쥭"))) code = 90;
-if (!str.compare(string("축")) || !str.compare(string("츅"))) code = 91;
-if (!str.compare(string("쿡")) || !str.compare(string("큑"))) code = 92;
-if (!str.compare(string("툭")) || !str.compare(string("튝"))) code = 93;
-if (!str.compare(string("푹")) || !str.compare(string("퓩"))) code = 94;
-if (!str.compare(string("훅")) || !str.compare(string("휵"))) code = 95;
-if (!str.compare(string("갓")) || !str.compare(string("샷"))) code = 96;
-if (!str.compare(string("낫")) || !str.compare(string("냣"))) code = 97;
-if (!str.compare(string("닷")) || !str.compare(string("댯"))) code = 98;
-if (!str.compare(string("랏")) || !str.compare(string("럇"))) code = 99;
-if (!str.compare(string("맛")) || !str.compare(string("먓"))) code = 100;
-if (!str.compare(string("밧")) || !str.compare(string("뱟"))) code = 101;
-if (!str.compare(string("삿")) || !str.compare(string("샷"))) code = 102;
-if (!str.compare(string("앗")) || !str.compare(string("얏"))) code = 103;
-if (!str.compare(string("잣")) || !str.compare(string("쟛"))) code = 104;
-if (!str.compare(string("찻")) || !str.compare(string("챳"))) code = 105;
-if (!str.compare(string("캇")) || !str.compare(string("캿"))) code = 106;
-if (!str.compare(string("탓")) || !str.compare(string("턋"))) code = 107;
-if (!str.compare(string("팟")) || !str.compare(string("퍗"))) code = 108;
-if (!str.compare(string("핫")) || !str.compare(string("햣"))) code = 109;
-if (!str.compare(string("것")) || !str.compare(string("겻"))) code = 110;
-if (!str.compare(string("넛")) || !str.compare(string("녓"))) code = 111;
-if (!str.compare(string("덧")) || !str.compare(string("뎟"))) code = 112;
-if (!str.compare(string("럿")) || !str.compare(string("렷"))) code = 113;
-if (!str.compare(string("멋")) || !str.compare(string("몃"))) code = 114;
-if (!str.compare(string("벗")) || !str.compare(string("볏"))) code = 115;
-if (!str.compare(string("섯")) || !str.compare(string("셧"))) code = 116;
-if (!str.compare(string("엇")) || !str.compare(string("엿"))) code = 117;
-if (!str.compare(string("젓")) || !str.compare(string("졋"))) code = 118;
-if (!str.compare(string("첫")) || !str.compare(string("쳣"))) code = 119;
-if (!str.compare(string("컷")) || !str.compare(string("켯"))) code = 120;
-if (!str.compare(string("텃")) || !str.compare(string("텻"))) code = 121;
-if (!str.compare(string("펏")) || !str.compare(string("폇"))) code = 122;
-if (!str.compare(string("헛")) || !str.compare(string("혓"))) code = 123;
+    if (!str.compare(string("더")) || !str.compare(string("뎌"))) code = 16;
 
+    if (!str.compare(string("러")) || !str.compare(string("려"))) code = 17;
+
+    if (!str.compare(string("머")) || !str.compare(string("며"))) code = 18;
+
+    if (!str.compare(string("버")) || !str.compare(string("벼"))) code = 19;
+
+    if (!str.compare(string("서")) || !str.compare(string("셔"))) code = 20;
+
+    if (!str.compare(string("어")) || !str.compare(string("여"))) code = 21;
+
+    if (!str.compare(string("저")) || !str.compare(string("져"))) code = 22;
+
+    if (!str.compare(string("처")) || !str.compare(string("쳐"))) code = 23;
+
+    if (!str.compare(string("커")) || !str.compare(string("켜"))) code = 24;
+
+    if (!str.compare(string("터")) || !str.compare(string("텨"))) code = 25;
+
+    if (!str.compare(string("퍼")) || !str.compare(string("펴"))) code = 26;
+
+    if (!str.compare(string("허")) || !str.compare(string("혀"))) code = 27;
+
+    if (!str.compare(string("고")) || !str.compare(string("교"))) code = 28;
+
+    if (!str.compare(string("노")) || !str.compare(string("뇨"))) code = 29;
+
+    if (!str.compare(string("도")) || !str.compare(string("됴"))) code = 30;
+
+    if (!str.compare(string("로")) || !str.compare(string("료"))) code = 31;
 
     // puts("mapping !");
     // printf("idx: %d\ncode: %d\n", idx, code);
 
-    return code;
-    return (*mapper[idx])(idx, code);
+    // return code;
+    return (*mapper[idx % 1024])(idx, code);
 }
 
 // check answer WTF
@@ -1464,7 +1226,7 @@ void makeTestCase() {
 
 
     char buf[256];
-    for (int i=0; i<5; i++) {
+    for (int i=0; i<128; i++) {
         MYSTDIN[i] = rand() % 30;
         memset(buf, 0, 256);
         sprintf(buf,"%d\n", MYSTDIN[i] * 10 + prevSTDIN);
@@ -1686,6 +1448,8 @@ int main(int argc, char ** argv) {
         printf("%d ", mappedCode[i/3]);
     }
 
+    delete [] outText; // get library code
+    
     // make test case
 
     makeTestCase(); // done
@@ -1697,7 +1461,7 @@ int main(int argc, char ** argv) {
 
     puts("== output ==");
 
-    /*
+    
 
     char zzzz[] = {
         INS_INIT, 1, INS_SEPERATOR,
@@ -1711,10 +1475,26 @@ int main(int argc, char ** argv) {
         INS_INC, 3, INS_SEPERATOR,
         INS_INC, 3, INS_SEPERATOR,
 
+        INS_MOV, 11, 3, INS_SEPERATOR,
+
         INS_INC, 5, INS_SEPERATOR,
         INS_INC, 5, INS_SEPERATOR,
         INS_MUL, 5, 3, INS_SEPERATOR,
 
+        INS_INIT, 10, INS_SEPERATOR,
+
+        INS_DEC, 10, INS_SEPERATOR,
+        INS_DEC, 10, INS_SEPERATOR,
+        INS_DEC, 10, INS_SEPERATOR,
+        INS_MUL, 10, 5, INS_SEPERATOR,
+        INS_DEC, 10, INS_SEPERATOR,
+        INS_DEC, 10, INS_SEPERATOR,
+
+        INS_MUL, 3, 3, INS_SEPERATOR,
+        INS_MUL, 3, 11, INS_SEPERATOR,
+        INS_INC, 3, INS_SEPERATOR,
+        INS_INC, 3, INS_SEPERATOR,
+        INS_INC, 3, INS_SEPERATOR,
 
         INS_GET, 2, INS_SEPERATOR,
         INS_MOV, 6, 2, INS_SEPERATOR,
@@ -1728,7 +1508,7 @@ int main(int argc, char ** argv) {
         INS_INC, 1, INS_SEPERATOR,
         INS_CMP, 1, 3, INS_SEPERATOR,
 
-        INS_LESS_JMP, -32, INS_SEPERATOR,
+        INS_LESS_JMP, 10, INS_SEPERATOR,
     };
     
 
@@ -1736,8 +1516,6 @@ int main(int argc, char ** argv) {
         mappedCode[k] = zzzz[k];
 
     printf("size: %d\n", sizeof(zzzz));
-
-    */
 
 
     while (1) {
@@ -1767,7 +1545,6 @@ int main(int argc, char ** argv) {
 
     // Destroy used object and release memory
     api->End();
-    delete [] outText; // free_hook_ptr -> oneshot
     pixDestroy(&image);
 
     unlink(filename);
