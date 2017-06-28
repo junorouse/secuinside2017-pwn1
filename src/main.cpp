@@ -69,16 +69,14 @@ using namespace std; // check
 
 // global variables
 
-char fuck[256] = "mynameisjunoim";
-
 // function ptrs (fucking mapping functions !)
 
 std::string ANSWERSTDOUT;
 std::string MYSTDOUT;
-int MYSTDIN[128] = {0,};
+long MYSTDIN[128] = {0,};
 char (*mapper[1024]) (int idx, int code); // get PIE base and calculate and bomb!
 
-unsigned int REGISTERS[256];
+unsigned long REGISTERS[256];
 
 unsigned int SAME_FLAG, LESS_FLAG, BIGGER_FLAG;
 
@@ -1132,11 +1130,11 @@ char mapping(int idx, std::string &str) {
 
     if (!str.compare(string("두")) || !str.compare(string("두"))) code = 0;
     if (!str.compare(string("강")) || !str.compare(string("강"))) code = 1;
-    if (!str.compare(string("남")) || !str.compare(string("남"))) code = 2;
+    if (!str.compare(string("남")) || !str.compare(string("납")) || !str.compare(string("냠")) || !str.compare(string("냡"))) code = 2;
     if (!str.compare(string("스")) || !str.compare(string("스"))) code = 3;
     if (!str.compare(string("타")) || !str.compare(string("타"))) code = 4;
     if (!str.compare(string("일")) || !str.compare(string("일"))) code = 5;
-    if (!str.compare(string("김")) || !str.compare(string("김"))) code = 6;
+    if (!str.compare(string("김")) || !str.compare(string("검"))) code = 6;
     if (!str.compare(string("치")) || !str.compare(string("치"))) code = 7;
     if (!str.compare(string("불")) || !str.compare(string("불"))) code = 8;
     if (!str.compare(string("고")) || !str.compare(string("고"))) code = 9;
@@ -1159,7 +1157,7 @@ char mapping(int idx, std::string &str) {
     if (!str.compare(string("정")) || !str.compare(string("정"))) code = 26;
     if (!str.compare(string("보")) || !str.compare(string("보"))) code = 27;
     if (!str.compare(string("술")) || !str.compare(string("술"))) code = 28;
-    if (!str.compare(string("원")) || !str.compare(string("원"))) code = 29;
+    if (!str.compare(string("원")) || !str.compare(string("윈"))) code = 29;
     if (!str.compare(string("임")) || !str.compare(string("임"))) code = 30;
     if (!str.compare(string("준")) || !str.compare(string("준"))) code = 31;
 
@@ -1168,7 +1166,6 @@ char mapping(int idx, std::string &str) {
 
     // return code;
 
-    printf(": %d, ", code);
     return (*mapper[idx % 1024])(idx, code);
 }
 
@@ -1177,7 +1174,7 @@ char mapping(int idx, std::string &str) {
 void correctAnswer() {
     cout << "Correct" << endl;
     // if pwn the system, attacker also can get reversing flag.
-    system("cat reversing_flag.txt");
+    system("cat /home/kimchi-vm/reversing_flag.txt");
 }
 
 void wrongAnswer() {
@@ -1201,45 +1198,17 @@ void makeTestCase() {
     for (int i=0; i<128; i++) {
         MYSTDIN[i] = rand() % 30;
         memset(buf, 0, 256);
-        sprintf(buf,"%d\n", MYSTDIN[i] * 10 + prevSTDIN);
+        sprintf(buf,"%ld\n", MYSTDIN[i] * 10 + prevSTDIN);
         ANSWERSTDOUT += std::string(buf);
 
         prevSTDIN = MYSTDIN[i];
     }
 
-    cout << ANSWERSTDOUT << endl;
+    // cout << ANSWERSTDOUT << endl;
 
 }
 
 void emulate(char code[]) {
-    // I want to obfuscation
-
-    /*
-    code spec:
-
-    GET REGISTER[index]
-    PRT REGISTER[index]
-
-    CMP REGISTER[index], REGISTER[index]
-    JMP REGISTER[index]
-    SAME_JMP REGISTER[index]
-    LESS_JMP REGISTER[index]
-    BIGGER_JMP REGISTER[index]
-
-    MOV REGISTER[index], REGISTER[index]
-    
-    INC REGISTER[index]
-    DEC REGISTER[index]
-
-    MUL REGISTER[index], REGISTER[index]
-    DIV REGISTER[index], REGISTER[index]
-    SUB REGISTER[index], REGISTER[index]
-    ADD REGISTER[index], REGISTER[index]
-    MOD REGISTER[index], REGISTER[index]
-
-    INIT REGISTER[index]
-    */
-
     char buf[256];
 
     if (CODE_RIP < 0) {
@@ -1255,9 +1224,9 @@ void emulate(char code[]) {
             // MYSTDOUT += ~
             // user can choose format string
             memset(buf, 0, 256);
-            sprintf(buf,"%d\n", REGISTERS[code[1]]);
+            sprintf(buf,"%ld\n", REGISTERS[code[1]]);
             MYSTDOUT += std::string(buf);
-            printf("%d\n", REGISTERS[code[1]]);
+            // printf("%ld\n", REGISTERS[code[1]]);
             break;
 
         case INS_PRT_CHAR:
@@ -1266,7 +1235,7 @@ void emulate(char code[]) {
             memset(buf, 0, 256);
             sprintf(buf,"%c\n", REGISTERS[code[1]]);
             MYSTDOUT += std::string(buf);
-            printf("%c\n", REGISTERS[code[1]]);
+            // printf("%c\n", REGISTERS[code[1]]);
             break;
 
 
@@ -1316,6 +1285,11 @@ void emulate(char code[]) {
             break;
 
         case INS_MOV_PTR:
+            REGISTERS[code[1]] = *(long *)(REGISTERS[code[2]]);
+            break;
+
+        case INS_PTR_MOV:
+            *(long *)(REGISTERS[code[1]]) = (REGISTERS[code[2]]);
             break;
 
         case INS_INC:
@@ -1371,6 +1345,9 @@ int main(int argc, char ** argv) {
     char mappedCode[8192];
     char liveCode[20];
 
+    setvbuf(stdin, 0, 2, 0);
+    setvbuf(stdout, 0, 2, 0);
+
     initMapper();
 
     scanf("%d", &fileSize);
@@ -1380,7 +1357,7 @@ int main(int argc, char ** argv) {
     fd = mkstemp(filename);
 
     while (fileSize) {
-        inputSize = read(0, buffer, 4096);
+        inputSize = read(0, buffer, 1);
         write(fd, buffer, inputSize);
         fileSize -= inputSize;
         if (fileSize < 0) {
@@ -1407,13 +1384,13 @@ int main(int argc, char ** argv) {
     s2 = ReplaceAll(s, std::string("\n"), std::string(""));
     s2 = ReplaceAll(s2, std::string(" "), std::string(""));
 
-    std::cout << s2 << "\n";
+    // std::cout << s2 << "\n";
 
     codeLen = s2.length() / 3;
 
-    printf("codeLen: %d\n", codeLen);
+    // printf("codeLen: %d\n", codeLen);
 
-    puts("code mappp");
+    // puts("code mappp");
 
     // code mapping
     for (int i=0; i<codeLen*3; i+=3) {
@@ -1422,10 +1399,10 @@ int main(int argc, char ** argv) {
 
         mappedCode[i/3] = mapping(i/3, oneChar);
 
-        printf("%d", mappedCode[i/3]);
+        // printf("%d, ", mappedCode[i/3]);
     }
 
-    puts("code mappp");
+    // puts("code mappp");
 
     delete [] outText; // get library code
 
@@ -1438,10 +1415,10 @@ int main(int argc, char ** argv) {
 
     CODE_RIP = 0;
 
-    puts("== output ==");
+    // puts("== output ==");
 
     
-    
+    /*
 
     char zzzz[] = {
         INS_GET, 1, INS_SEPERATOR,INS_GET, 1, INS_SEPERATOR,INS_GET, 1, INS_SEPERATOR,INS_GET, 1, INS_SEPERATOR,INS_GET, 1, INS_SEPERATOR,INS_GET, 1, INS_SEPERATOR,INS_GET, 1, INS_SEPERATOR,INS_GET, 1, INS_SEPERATOR,INS_GET, 1, INS_SEPERATOR,INS_GET, 1, INS_SEPERATOR,INS_GET, 1, INS_SEPERATOR,INS_GET, 1, INS_SEPERATOR,INS_GET, 1, INS_SEPERATOR,INS_GET, 1, INS_SEPERATOR,INS_GET, 1, INS_SEPERATOR,INS_GET, 1, INS_SEPERATOR,INS_GET, 1, INS_SEPERATOR,INS_GET, 1, INS_SEPERATOR,INS_GET, 1, INS_SEPERATOR,INS_GET, 1, INS_SEPERATOR,INS_GET, 1, INS_SEPERATOR,INS_GET, 1, INS_SEPERATOR,INS_GET, 1, INS_SEPERATOR,INS_GET, 1, INS_SEPERATOR,INS_GET, 1, INS_SEPERATOR,INS_GET, 1, INS_SEPERATOR,INS_GET, 1, INS_SEPERATOR,INS_GET, 1, INS_SEPERATOR,INS_GET, 1, INS_SEPERATOR,INS_GET, 1, INS_SEPERATOR,INS_GET, 1, INS_SEPERATOR,INS_GET, 1, INS_SEPERATOR,INS_GET, 1, INS_SEPERATOR,INS_GET, 1, INS_SEPERATOR,INS_GET, 1, INS_SEPERATOR,INS_GET, 1, INS_SEPERATOR,INS_GET, 1, INS_SEPERATOR,INS_GET, 1, INS_SEPERATOR,INS_GET, 1, INS_SEPERATOR,INS_GET, 1, INS_SEPERATOR,INS_GET, 1, INS_SEPERATOR,INS_GET, 1, INS_SEPERATOR,INS_GET, 1, INS_SEPERATOR,INS_GET, 1, INS_SEPERATOR,INS_GET, 1, INS_SEPERATOR,INS_GET, 1, INS_SEPERATOR,INS_GET, 1, INS_SEPERATOR,INS_GET, 1, INS_SEPERATOR,INS_GET, 1, INS_SEPERATOR,INS_GET, 1, INS_SEPERATOR,INS_GET, 1, INS_SEPERATOR,INS_GET, 1, INS_SEPERATOR,INS_GET, 1, INS_SEPERATOR,INS_GET, 1, INS_SEPERATOR,INS_GET, 1, INS_SEPERATOR,INS_GET, 1, INS_SEPERATOR,INS_GET, 1, INS_SEPERATOR,INS_GET, 1, INS_SEPERATOR,INS_GET, 1, INS_SEPERATOR,INS_GET, 1, INS_SEPERATOR,INS_GET, 1, INS_SEPERATOR,INS_GET, 1, INS_SEPERATOR,INS_GET, 1, INS_SEPERATOR,INS_GET, 1, INS_SEPERATOR,INS_GET, 1, INS_SEPERATOR,INS_GET, 1, INS_SEPERATOR,INS_GET, 1, INS_SEPERATOR,INS_GET, 1, INS_SEPERATOR,INS_GET, 1, INS_SEPERATOR,INS_GET, 1, INS_SEPERATOR,INS_GET, 1, INS_SEPERATOR,INS_GET, 1, INS_SEPERATOR,INS_GET, 1, INS_SEPERATOR,INS_GET, 1, INS_SEPERATOR,INS_GET, 1, INS_SEPERATOR,INS_GET, 1, INS_SEPERATOR,INS_GET, 1, INS_SEPERATOR,INS_GET, 1, INS_SEPERATOR,INS_GET, 1, INS_SEPERATOR,INS_GET, 1, INS_SEPERATOR,INS_GET, 1, INS_SEPERATOR,INS_GET, 1, INS_SEPERATOR,INS_GET, 1, INS_SEPERATOR,INS_GET, 1, INS_SEPERATOR,INS_GET, 1, INS_SEPERATOR,INS_GET, 1, INS_SEPERATOR,INS_GET, 1, INS_SEPERATOR,INS_GET, 1, INS_SEPERATOR,INS_GET, 1, INS_SEPERATOR,INS_GET, 1, INS_SEPERATOR,INS_GET, 1, INS_SEPERATOR,INS_GET, 1, INS_SEPERATOR,INS_GET, 1, INS_SEPERATOR,INS_GET, 1, INS_SEPERATOR,INS_GET, 1, INS_SEPERATOR,INS_GET, 1, INS_SEPERATOR,INS_GET, 1, INS_SEPERATOR,INS_GET, 1, INS_SEPERATOR,INS_GET, 1, INS_SEPERATOR,INS_GET, 1, INS_SEPERATOR,INS_GET, 1, INS_SEPERATOR,INS_GET, 1, INS_SEPERATOR,INS_GET, 1, INS_SEPERATOR,INS_GET, 1, INS_SEPERATOR,INS_GET, 1, INS_SEPERATOR,INS_GET, 1, INS_SEPERATOR,INS_GET, 1, INS_SEPERATOR,INS_GET, 1, INS_SEPERATOR,INS_GET, 1, INS_SEPERATOR,INS_GET, 1, INS_SEPERATOR,INS_GET, 1, INS_SEPERATOR,INS_GET, 1, INS_SEPERATOR,INS_GET, 1, INS_SEPERATOR,INS_GET, 1, INS_SEPERATOR,INS_GET, 1, INS_SEPERATOR,INS_GET, 1, INS_SEPERATOR,INS_GET, 1, INS_SEPERATOR,INS_GET, 1, INS_SEPERATOR,INS_GET, 1, INS_SEPERATOR,INS_GET, 1, INS_SEPERATOR,INS_GET, 1, INS_SEPERATOR,INS_GET, 1, INS_SEPERATOR,INS_GET, 1, INS_SEPERATOR,INS_GET, 1, INS_SEPERATOR,INS_GET, 1, INS_SEPERATOR,INS_GET, 1, INS_SEPERATOR,INS_GET, 1, INS_SEPERATOR,INS_GET, 1, INS_SEPERATOR,
@@ -1456,6 +1433,7 @@ int main(int argc, char ** argv) {
     printf("size: %d\n", sizeof(zzzz));
 
     
+    */
 
 
     while (1) {
@@ -1489,7 +1467,7 @@ int main(int argc, char ** argv) {
 
     unlink(filename);
 
-    cout << "Finish" << endl;
+    // cout << "Finish" << endl;
 
     exit(1);
 
