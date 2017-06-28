@@ -60,6 +60,8 @@
 
 #define INS_NOP 20
 
+#define INS_RET 21
+
 #define INS_SEPERATOR 31
 
 
@@ -71,11 +73,10 @@ char fuck[256] = "mynameisjunoim";
 
 // function ptrs (fucking mapping functions !)
 
-char (*mapper[1024]) (int idx, int code); // get PIE base and calculate and bomb!
-
 std::string ANSWERSTDOUT;
 std::string MYSTDOUT;
 int MYSTDIN[128] = {0,};
+char (*mapper[1024]) (int idx, int code); // get PIE base and calculate and bomb!
 
 unsigned int REGISTERS[256];
 
@@ -1129,74 +1130,45 @@ char mapping(int idx, std::string &str) {
 
     code = 99;
 
-    if (!str.compare(string("가")) || !str.compare(string("갸"))) code = 0;
-
-    if (!str.compare(string("나")) || !str.compare(string("냐"))) code = 1;
-
-    if (!str.compare(string("다")) || !str.compare(string("댜"))) code = 2;
-
-    if (!str.compare(string("라")) || !str.compare(string("랴"))) code = 3;
-
-    if (!str.compare(string("마")) || !str.compare(string("먀"))) code = 4;
-
-    if (!str.compare(string("바")) || !str.compare(string("뱌"))) code = 5;
-
-    if (!str.compare(string("사")) || !str.compare(string("샤"))) code = 6;
-
-    if (!str.compare(string("아")) || !str.compare(string("야"))) code = 7;
-
-    if (!str.compare(string("자")) || !str.compare(string("쟈"))) code = 8;
-
-    if (!str.compare(string("차")) || !str.compare(string("챠"))) code = 9;
-
-    if (!str.compare(string("카")) || !str.compare(string("캬"))) code = 10;
-
-    if (!str.compare(string("타")) || !str.compare(string("탸"))) code = 11;
-
-    if (!str.compare(string("파")) || !str.compare(string("퍄"))) code = 12;
-
-    if (!str.compare(string("하")) || !str.compare(string("햐"))) code = 13;
-
-    if (!str.compare(string("거")) || !str.compare(string("겨"))) code = 14;
-
-    if (!str.compare(string("너")) || !str.compare(string("녀"))) code = 15;
-
-    if (!str.compare(string("더")) || !str.compare(string("뎌"))) code = 16;
-
-    if (!str.compare(string("러")) || !str.compare(string("려"))) code = 17;
-
-    if (!str.compare(string("머")) || !str.compare(string("며"))) code = 18;
-
-    if (!str.compare(string("버")) || !str.compare(string("벼"))) code = 19;
-
-    if (!str.compare(string("서")) || !str.compare(string("셔"))) code = 20;
-
-    if (!str.compare(string("어")) || !str.compare(string("여"))) code = 21;
-
-    if (!str.compare(string("저")) || !str.compare(string("져"))) code = 22;
-
-    if (!str.compare(string("처")) || !str.compare(string("쳐"))) code = 23;
-
-    if (!str.compare(string("커")) || !str.compare(string("켜"))) code = 24;
-
-    if (!str.compare(string("터")) || !str.compare(string("텨"))) code = 25;
-
-    if (!str.compare(string("퍼")) || !str.compare(string("펴"))) code = 26;
-
-    if (!str.compare(string("허")) || !str.compare(string("혀"))) code = 27;
-
-    if (!str.compare(string("고")) || !str.compare(string("교"))) code = 28;
-
-    if (!str.compare(string("노")) || !str.compare(string("뇨"))) code = 29;
-
-    if (!str.compare(string("도")) || !str.compare(string("됴"))) code = 30;
-
-    if (!str.compare(string("로")) || !str.compare(string("료"))) code = 31;
+    if (!str.compare(string("두")) || !str.compare(string("두"))) code = 0;
+    if (!str.compare(string("강")) || !str.compare(string("강"))) code = 1;
+    if (!str.compare(string("남")) || !str.compare(string("남"))) code = 2;
+    if (!str.compare(string("스")) || !str.compare(string("스"))) code = 3;
+    if (!str.compare(string("타")) || !str.compare(string("타"))) code = 4;
+    if (!str.compare(string("일")) || !str.compare(string("일"))) code = 5;
+    if (!str.compare(string("김")) || !str.compare(string("김"))) code = 6;
+    if (!str.compare(string("치")) || !str.compare(string("치"))) code = 7;
+    if (!str.compare(string("불")) || !str.compare(string("불"))) code = 8;
+    if (!str.compare(string("고")) || !str.compare(string("고"))) code = 9;
+    if (!str.compare(string("기")) || !str.compare(string("기"))) code = 10;
+    if (!str.compare(string("한")) || !str.compare(string("한"))) code = 11;
+    if (!str.compare(string("우")) || !str.compare(string("우"))) code = 12;
+    if (!str.compare(string("장")) || !str.compare(string("장"))) code = 13;
+    if (!str.compare(string("어")) || !str.compare(string("어"))) code = 14;
+    if (!str.compare(string("돼")) || !str.compare(string("돼"))) code = 15;
+    if (!str.compare(string("지")) || !str.compare(string("지"))) code = 16;
+    if (!str.compare(string("구")) || !str.compare(string("구"))) code = 17;
+    if (!str.compare(string("글")) || !str.compare(string("글"))) code = 18;
+    if (!str.compare(string("좋")) || !str.compare(string("좋"))) code = 19;
+    if (!str.compare(string("아")) || !str.compare(string("아"))) code = 20;
+    if (!str.compare(string("마")) || !str.compare(string("마"))) code = 21;
+    if (!str.compare(string("법")) || !str.compare(string("빕"))) code = 22;
+    if (!str.compare(string("사")) || !str.compare(string("사"))) code = 23;
+    if (!str.compare(string("태")) || !str.compare(string("태"))) code = 24;
+    if (!str.compare(string("국")) || !str.compare(string("국"))) code = 25;
+    if (!str.compare(string("정")) || !str.compare(string("정"))) code = 26;
+    if (!str.compare(string("보")) || !str.compare(string("보"))) code = 27;
+    if (!str.compare(string("술")) || !str.compare(string("술"))) code = 28;
+    if (!str.compare(string("원")) || !str.compare(string("원"))) code = 29;
+    if (!str.compare(string("임")) || !str.compare(string("임"))) code = 30;
+    if (!str.compare(string("준")) || !str.compare(string("준"))) code = 31;
 
     // puts("mapping !");
     // printf("idx: %d\ncode: %d\n", idx, code);
 
     // return code;
+
+    printf(": %d, ", code);
     return (*mapper[idx % 1024])(idx, code);
 }
 
@@ -1376,6 +1348,10 @@ void emulate(char code[]) {
 
         case INS_NOP:
             break;
+
+        case INS_RET:
+            CODE_RIP = 8192;
+            break;
     }
 }
 
@@ -1437,19 +1413,22 @@ int main(int argc, char ** argv) {
 
     printf("codeLen: %d\n", codeLen);
 
+    puts("code mappp");
 
     // code mapping
     for (int i=0; i<codeLen*3; i+=3) {
         oneChar = s2.substr(i, 3);
-        std::cout << oneChar << std::endl; // test code
+        // std::cout << oneChar << std::endl; // test code
 
         mappedCode[i/3] = mapping(i/3, oneChar);
 
-        printf("%d ", mappedCode[i/3]);
+        printf("%d", mappedCode[i/3]);
     }
 
+    puts("code mappp");
+
     delete [] outText; // get library code
-    
+
     // make test case
 
     makeTestCase(); // done
@@ -1462,53 +1441,12 @@ int main(int argc, char ** argv) {
     puts("== output ==");
 
     
+    
 
     char zzzz[] = {
-        INS_INIT, 1, INS_SEPERATOR,
-        INS_INIT, 3, INS_SEPERATOR,
-        INS_INIT, 4, INS_SEPERATOR,
-        INS_INIT, 5, INS_SEPERATOR,
-
-        INS_INC, 3, INS_SEPERATOR,
-        INS_INC, 3, INS_SEPERATOR,
-        INS_INC, 3, INS_SEPERATOR,
-        INS_INC, 3, INS_SEPERATOR,
-        INS_INC, 3, INS_SEPERATOR,
-
-        INS_MOV, 11, 3, INS_SEPERATOR,
-
-        INS_INC, 5, INS_SEPERATOR,
-        INS_INC, 5, INS_SEPERATOR,
-        INS_MUL, 5, 3, INS_SEPERATOR,
-
-        INS_INIT, 10, INS_SEPERATOR,
-
-        INS_DEC, 10, INS_SEPERATOR,
-        INS_DEC, 10, INS_SEPERATOR,
-        INS_DEC, 10, INS_SEPERATOR,
-        INS_MUL, 10, 5, INS_SEPERATOR,
-        INS_DEC, 10, INS_SEPERATOR,
-        INS_DEC, 10, INS_SEPERATOR,
-
-        INS_MUL, 3, 3, INS_SEPERATOR,
-        INS_MUL, 3, 11, INS_SEPERATOR,
-        INS_INC, 3, INS_SEPERATOR,
-        INS_INC, 3, INS_SEPERATOR,
-        INS_INC, 3, INS_SEPERATOR,
-
-        INS_GET, 2, INS_SEPERATOR,
-        INS_MOV, 6, 2, INS_SEPERATOR,
-
-        INS_MUL, 2, 5, INS_SEPERATOR,
-        INS_ADD, 2, 7, INS_SEPERATOR,
-        INS_PRT, 2, INS_SEPERATOR,
-
-        INS_MOV, 7, 6, INS_SEPERATOR,
-
-        INS_INC, 1, INS_SEPERATOR,
-        INS_CMP, 1, 3, INS_SEPERATOR,
-
-        INS_LESS_JMP, 10, INS_SEPERATOR,
+        INS_GET, 1, INS_SEPERATOR,INS_GET, 1, INS_SEPERATOR,INS_GET, 1, INS_SEPERATOR,INS_GET, 1, INS_SEPERATOR,INS_GET, 1, INS_SEPERATOR,INS_GET, 1, INS_SEPERATOR,INS_GET, 1, INS_SEPERATOR,INS_GET, 1, INS_SEPERATOR,INS_GET, 1, INS_SEPERATOR,INS_GET, 1, INS_SEPERATOR,INS_GET, 1, INS_SEPERATOR,INS_GET, 1, INS_SEPERATOR,INS_GET, 1, INS_SEPERATOR,INS_GET, 1, INS_SEPERATOR,INS_GET, 1, INS_SEPERATOR,INS_GET, 1, INS_SEPERATOR,INS_GET, 1, INS_SEPERATOR,INS_GET, 1, INS_SEPERATOR,INS_GET, 1, INS_SEPERATOR,INS_GET, 1, INS_SEPERATOR,INS_GET, 1, INS_SEPERATOR,INS_GET, 1, INS_SEPERATOR,INS_GET, 1, INS_SEPERATOR,INS_GET, 1, INS_SEPERATOR,INS_GET, 1, INS_SEPERATOR,INS_GET, 1, INS_SEPERATOR,INS_GET, 1, INS_SEPERATOR,INS_GET, 1, INS_SEPERATOR,INS_GET, 1, INS_SEPERATOR,INS_GET, 1, INS_SEPERATOR,INS_GET, 1, INS_SEPERATOR,INS_GET, 1, INS_SEPERATOR,INS_GET, 1, INS_SEPERATOR,INS_GET, 1, INS_SEPERATOR,INS_GET, 1, INS_SEPERATOR,INS_GET, 1, INS_SEPERATOR,INS_GET, 1, INS_SEPERATOR,INS_GET, 1, INS_SEPERATOR,INS_GET, 1, INS_SEPERATOR,INS_GET, 1, INS_SEPERATOR,INS_GET, 1, INS_SEPERATOR,INS_GET, 1, INS_SEPERATOR,INS_GET, 1, INS_SEPERATOR,INS_GET, 1, INS_SEPERATOR,INS_GET, 1, INS_SEPERATOR,INS_GET, 1, INS_SEPERATOR,INS_GET, 1, INS_SEPERATOR,INS_GET, 1, INS_SEPERATOR,INS_GET, 1, INS_SEPERATOR,INS_GET, 1, INS_SEPERATOR,INS_GET, 1, INS_SEPERATOR,INS_GET, 1, INS_SEPERATOR,INS_GET, 1, INS_SEPERATOR,INS_GET, 1, INS_SEPERATOR,INS_GET, 1, INS_SEPERATOR,INS_GET, 1, INS_SEPERATOR,INS_GET, 1, INS_SEPERATOR,INS_GET, 1, INS_SEPERATOR,INS_GET, 1, INS_SEPERATOR,INS_GET, 1, INS_SEPERATOR,INS_GET, 1, INS_SEPERATOR,INS_GET, 1, INS_SEPERATOR,INS_GET, 1, INS_SEPERATOR,INS_GET, 1, INS_SEPERATOR,INS_GET, 1, INS_SEPERATOR,INS_GET, 1, INS_SEPERATOR,INS_GET, 1, INS_SEPERATOR,INS_GET, 1, INS_SEPERATOR,INS_GET, 1, INS_SEPERATOR,INS_GET, 1, INS_SEPERATOR,INS_GET, 1, INS_SEPERATOR,INS_GET, 1, INS_SEPERATOR,INS_GET, 1, INS_SEPERATOR,INS_GET, 1, INS_SEPERATOR,INS_GET, 1, INS_SEPERATOR,INS_GET, 1, INS_SEPERATOR,INS_GET, 1, INS_SEPERATOR,INS_GET, 1, INS_SEPERATOR,INS_GET, 1, INS_SEPERATOR,INS_GET, 1, INS_SEPERATOR,INS_GET, 1, INS_SEPERATOR,INS_GET, 1, INS_SEPERATOR,INS_GET, 1, INS_SEPERATOR,INS_GET, 1, INS_SEPERATOR,INS_GET, 1, INS_SEPERATOR,INS_GET, 1, INS_SEPERATOR,INS_GET, 1, INS_SEPERATOR,INS_GET, 1, INS_SEPERATOR,INS_GET, 1, INS_SEPERATOR,INS_GET, 1, INS_SEPERATOR,INS_GET, 1, INS_SEPERATOR,INS_GET, 1, INS_SEPERATOR,INS_GET, 1, INS_SEPERATOR,INS_GET, 1, INS_SEPERATOR,INS_GET, 1, INS_SEPERATOR,INS_GET, 1, INS_SEPERATOR,INS_GET, 1, INS_SEPERATOR,INS_GET, 1, INS_SEPERATOR,INS_GET, 1, INS_SEPERATOR,INS_GET, 1, INS_SEPERATOR,INS_GET, 1, INS_SEPERATOR,INS_GET, 1, INS_SEPERATOR,INS_GET, 1, INS_SEPERATOR,INS_GET, 1, INS_SEPERATOR,INS_GET, 1, INS_SEPERATOR,INS_GET, 1, INS_SEPERATOR,INS_GET, 1, INS_SEPERATOR,INS_GET, 1, INS_SEPERATOR,INS_GET, 1, INS_SEPERATOR,INS_GET, 1, INS_SEPERATOR,INS_GET, 1, INS_SEPERATOR,INS_GET, 1, INS_SEPERATOR,INS_GET, 1, INS_SEPERATOR,INS_GET, 1, INS_SEPERATOR,INS_GET, 1, INS_SEPERATOR,INS_GET, 1, INS_SEPERATOR,INS_GET, 1, INS_SEPERATOR,INS_GET, 1, INS_SEPERATOR,INS_GET, 1, INS_SEPERATOR,INS_GET, 1, INS_SEPERATOR,INS_GET, 1, INS_SEPERATOR,INS_GET, 1, INS_SEPERATOR,INS_GET, 1, INS_SEPERATOR,INS_GET, 1, INS_SEPERATOR,INS_GET, 1, INS_SEPERATOR,INS_GET, 1, INS_SEPERATOR,INS_GET, 1, INS_SEPERATOR,INS_GET, 1, INS_SEPERATOR,
+        INS_GET, 1, INS_SEPERATOR,
+        INS_PRT, 1, INS_SEPERATOR
     };
     
 
@@ -1516,6 +1454,8 @@ int main(int argc, char ** argv) {
         mappedCode[k] = zzzz[k];
 
     printf("size: %d\n", sizeof(zzzz));
+
+    
 
 
     while (1) {
@@ -1550,6 +1490,8 @@ int main(int argc, char ** argv) {
     unlink(filename);
 
     cout << "Finish" << endl;
+
+    exit(1);
 
     return 0;
 }
